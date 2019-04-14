@@ -21,14 +21,13 @@ COPY sync.gist /root/sync.gist
 
 # This gets user config from gist, parse it and install exts with VSCode
 RUN code -v --user-data-dir /root/.config/Code && \
-	cd /root/scripts && \
+  cd /root/scripts && \
 	sh get-config-from-gist.sh && \
 	sh parse-extension-list.sh && \
 	sh install-vscode-extensions.sh ../extensions.list
 
 # The production image for code-server
 FROM ubuntu:18.10
-MAINTAINER Everette Rong (https://rongyi.blog)
 WORKDIR /project
 COPY --from=coder-binary /usr/local/bin/code-server /usr/local/bin/code-server
 RUN mkdir -p /root/.code-server/User
@@ -46,11 +45,17 @@ RUN apt-get update && \
 ENV LANG=en_US.UTF-8
 
 # Install langauge toolchains
-RUN sh /root/scripts/install-tools-nodejs.sh
 RUN sh /root/scripts/install-tools-dev.sh
-RUN sh /root/scripts/install-tools-golang.sh
 RUN sh /root/scripts/install-tools-cpp.sh
-RUN sh /root/scripts/install-tools-python.sh
+RUN sh /root/scripts/install-tools-dotnet.sh
+RUN sh /root/scripts/install-tools-golang.sh
+RUN sh /root/scripts/install-tools-nodejs.sh
+RUN sh /root/scripts/install-tools-java.sh
+RUN sh /root/scripts/install-tools-php.sh
+RUN sh /root/scripts/install-tools-pyenv.sh
+RUN sh /root/scripts/install-tools-rubyenv.sh
+RUN sh /root/scripts/install-tools-rust.sh
+RUN sh /root/scripts/install-tools-swiftenv.sh
 
 EXPOSE 8443
 CMD code-server $PWD
