@@ -4,50 +4,10 @@ FROM codercom/code-server as coder-binary
 FROM ubuntu:18.10 as vscode-env
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install the actual VSCode to download configs and extensions
-RUN apt-get update && \
-	apt-get install -y curl && \
-	curl -o vscode-amd64.deb -L https://vscode-update.azurewebsites.net/latest/linux-deb-x64/stable && \
-	dpkg -i vscode-amd64.deb || true && \
-	apt-get install -y -f && \
-	# VSCode missing deps
-	apt-get install -y libx11-xcb1 libasound2 && \
-	rm -f vscode-amd64.deb && \
-	# CLI json parser
-	apt-get install -y jq
-
-COPY scripts /root/scripts
-COPY sync.gist /root/sync.gist
-
-# This gets user config from gist, parse it and install exts with VSCode
-RUN code -v --user-data-dir /root/.config/Code && \
-  cd /root/scripts && \
-	sh get-config-from-gist.sh && \
-	sh parse-extension-list.sh && \
-	sh install-vscode-extensions.sh ../extensions.list
-
-# The production image for code-server
-FROM ubuntu:18.10
-ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /project
-COPY --from=coder-binary /usr/local/bin/code-server /usr/local/bin/code-server
-RUN mkdir -p /root/.code-server/User
-COPY --from=vscode-env /root/settings.json /root/.code-server/User/settings.json
-COPY --from=vscode-env /root/.vscode/extensions /root/.code-server/extensions
-COPY scripts /root/scripts
-
 RUN apt-get update && \
 	apt-get install -y curl wget git gnupg2 ca-certificates sudo && \
-	apt-get install -y locales && \
-	locale-gen en_US.UTF-8
-
-RUN apt-get install dialog apt-utils -y
-# Locale Generation
-# We unfortunately cannot use update-locale because docker will not use the env variables
-# configured in /etc/default/locale so we need to set it manually.
-ENV LANG=en_US.UTF-8
-
-# Create a non-root user with username 'user'
+	apt-get install -y software-properties-common
+# Create a non-home/user user with username 'user'
 RUN useradd -m -s /bin/bash user \
 	&& echo 'user ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers \
 	&& chown -R user /home/user \
@@ -55,6 +15,46 @@ RUN useradd -m -s /bin/bash user \
 
 USER user
 WORKDIR /home/user/
+
+# Install the actual VSCode to download configs and extensions
+RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - && \
+	sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" && \
+	sudo apt install -y code && \
+	sudo apt-get install -y -f && \
+	# VSCode missing deps
+	sudo apt-get install -y libx11-xcb1 libasound2 && \
+	# CLI json parser
+	sudo apt-get install -y jq
+
+COPY scripts /home/user/scripts
+COPY sync.gist /home/user/sync.gist
+
+# This gets user config from gist, parse it and install exts with VSCode
+RUN sudo apt-get update && code -v --user-data-dir /home/user/.config/Code && \
+  cd /home/user/scripts && \
+	sh get-config-from-gist.sh && \
+	sh parse-extension-list.sh && \
+	sh install-vscode-extensions.sh ../extensions.list
+
+# The production image for code-server
+FROM ubuntu:18.10
+ARG DEBIAN_FRONTEND=noninteractive
+COPY --from=coder-binary /usr/local/bin/code-server /usr/local/bin/code-server
+RUN mkdir -p /home/user/.code-server/User
+COPY --from=vscode-env /home/user/settings.json /home/user/.code-server/User/settings.json
+COPY --from=vscode-env /home/user/.vscode/extensions /home/user/.code-server/extensions
+COPY scripts /home/user/scripts
+
+RUN sudo apt-get update && \
+	sudo apt-get install -y curl wget git gnupg2 ca-certificates sudo && \
+	sudo apt-get install -y locales && \
+	locale-gen en_US.UTF-8
+
+RUN sudo apt-get install dialog apt-utils -y
+# Locale Generation
+# We unfortunately cannot use update-locale because docker will not use the env variables
+# configured in /etc/default/locale so we need to set it manually.
+ENV LANG=en_US.UTF-8
 
 # Install langauge toolchains
 
