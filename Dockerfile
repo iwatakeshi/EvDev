@@ -40,7 +40,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 # Install dependencies for the scripts
 RUN apt-get update && \
 	apt-get install -y curl wget gnupg2 ca-certificates sudo && \
-	apt-get install -y curl build-essential m4 make git patch ruby zlib1g-dev tcl && \
+	apt-get install -y curl build-essential m4 make git patch ruby zlib1g-dev tcl libedit-dev && \
 	apt-get install -y apt-transport-https
 
 # Create a non-root user with username 'user'
@@ -72,8 +72,8 @@ RUN sudo sh /home/user/scripts/install-tools-dotnet.sh
 RUN sudo sh /home/user/scripts/install-tools-java.sh
 RUN sudo sh /home/user/scripts/install-tools-nodejs.sh
 RUN sudo sh /home/user/scripts/install-tools-php.sh
-RUN sudo sh /home/user/scripts/install-tools-rust.sh
 
+RUN sh /home/user/scripts/install-tools-rust.sh
 RUN sh /home/user/scripts/install-tools-goenv.sh
 RUN sh /home/user/scripts/install-tools-pyenv.sh
 RUN sh /home/user/scripts/install-tools-rubyenv.sh
