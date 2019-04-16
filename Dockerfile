@@ -18,7 +18,7 @@ COPY scripts /home/user/scripts
 COPY sync.gist /home/user/sync.gist
 
 # This gets user config from gist, parse it and install exts with VSCode
-RUN sudo apt-get update && code -v --user-data-dir /home/user/.config/Code && \
+RUN apt-get update && code -v --user-data-dir /home/user/.config/Code && \
   cd /home/user/scripts && \
 	sh get-config-from-gist.sh && \
 	sh parse-extension-list.sh && \
