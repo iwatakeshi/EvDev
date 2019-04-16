@@ -41,7 +41,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 RUN apt-get update && \
 	apt-get install -y curl wget gnupg2 ca-certificates sudo && \
 	apt-get install -y curl build-essential m4 make git patch ruby zlib1g-dev tcl libedit-dev && \
-	apt-get install -y apt-transport-https
+	apt-get install -y apt-transport-https && \
+	apt-get install -y cmake ninja-build clang python uuid-dev && \
+	apt-get install -y libicu-dev icu-devtools libbsd-dev libedit-dev && \
+	apt-get install -y libxml2-dev libsqlite3-dev swig libpython-dev && \
+	apt-get install -y libncurses5-dev pkg-config
 
 # Create a non-root user with username 'user'
 RUN useradd -m -s /bin/bash user \
@@ -80,4 +84,6 @@ RUN sh /home/user/scripts/install-tools-rubyenv.sh
 RUN sh /home/user/scripts/install-tools-swiftenv.sh
 
 EXPOSE 8443
+
+USER root
 CMD code-server $PWD
