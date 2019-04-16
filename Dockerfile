@@ -69,12 +69,13 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
 RUN sudo sh /home/user/scripts/install-tools-cpp.sh
 RUN sudo sh /home/user/scripts/install-tools-dev.sh
 RUN sudo sh /home/user/scripts/install-tools-dotnet.sh
-RUN sudo sh /home/user/scripts/install-tools-golang.sh
 RUN sudo sh /home/user/scripts/install-tools-java.sh
 RUN sudo sh /home/user/scripts/install-tools-nodejs.sh
 RUN sudo sh /home/user/scripts/install-tools-php.sh
 RUN sudo sh /home/user/scripts/install-tools-rust.sh
-RUN sudo sh /home/user/scripts/install-tools-pyenv.sh
+
+RUN sh /home/user/scripts/install-tools-goenv.sh
+RUN sh /home/user/scripts/install-tools-pyenv.sh
 RUN sh /home/user/scripts/install-tools-rubyenv.sh
 RUN sh /home/user/scripts/install-tools-swiftenv.sh
 
