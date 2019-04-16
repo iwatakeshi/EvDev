@@ -2,5 +2,5 @@
 
 # Install Swift via swifenv
 brew update && brew install kylef/formulae/swiftenv
-swiftenv install 5.0-dev
-swifenv global 5.0-dev
+swiftenv install 4.1
+swifenv global 4.1
