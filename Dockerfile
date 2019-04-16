@@ -12,7 +12,7 @@ RUN apt-get update && \
 	apt-get install -y apt-transport-https && \
 	apt-get update && apt-get -y install code && \
 	# CLI json parser
-	sudo apt-get install -y jq
+	apt-get install -y jq
 
 COPY scripts /home/user/scripts
 COPY sync.gist /home/user/sync.gist
