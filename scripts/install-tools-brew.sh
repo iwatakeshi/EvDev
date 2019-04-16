@@ -1,6 +1,9 @@
-PATH=/home/user/.linuxbrew/bin:/home/user/.linuxbrew/sbin:$PATH \
-    SHELL=/bin/bash
-git clone https://github.com/Homebrew/brew /home/user/.linuxbrew/Homebrew \
-    && mkdir /home/user/.linuxbrew/bin \
-    && ln -s ../Homebrew/bin/brew /home/user/.linuxbrew/bin/ \
-    && brew config
+#!/bin/bash
+
+export USER=user
+
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+echo "export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH" >> ~/.bash_profile
+echo "export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH" >> ~/.profile
+. ~/.bash_profile
+echo $PATH
