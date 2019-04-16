@@ -12,14 +12,14 @@ RUN apt-get update && \
 	apt-get install -y apt-transport-https && \
 	apt-get update && apt-get -y install code && \
 	# CLI json parser
-	apt-get install -y jq
+	sudo apt-get install -y jq
 
-COPY scripts /root/scripts
-COPY sync.gist /root/sync.gist
+COPY scripts /home/user/scripts
+COPY sync.gist /home/user/sync.gist
 
 # This gets user config from gist, parse it and install exts with VSCode
-RUN code -v --user-data-dir /root/.config/Code && \
-  cd /root/scripts && \
+RUN sudo apt-get update && code -v --user-data-dir /home/user/.config/Code && \
+  cd /home/user/scripts && \
 	sh get-config-from-gist.sh && \
 	sh parse-extension-list.sh && \
 	sh install-vscode-extensions.sh ../extensions.list
