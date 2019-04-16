@@ -14,12 +14,12 @@ RUN apt-get update && \
 	# CLI json parser
 	apt-get install -y jq
 
-COPY scripts /home/user/scripts
-COPY sync.gist /home/user/sync.gist
+COPY scripts /root/scripts
+COPY sync.gist /root/sync.gist
 
 # This gets user config from gist, parse it and install exts with VSCode
-RUN apt-get update && code -v --user-data-dir /home/user/.config/Code && \
-  cd /home/user/scripts && \
+RUN apt-get update && code -v --user-data-dir /root/.config/Code && \
+  cd /root/scripts && \
 	sh get-config-from-gist.sh && \
 	sh parse-extension-list.sh && \
 	sh install-vscode-extensions.sh ../extensions.list
